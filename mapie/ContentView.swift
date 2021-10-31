@@ -11,12 +11,12 @@ struct ContentView: View {
     
     @StateObject private var viewModel = ContentViewModel()
     
-    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.331, longitude: -51.0949), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+
     
     
     
     var body: some View {
-       Map(coordinateRegion: $region, showsUserLocation: true)
+        Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
             .ignoresSafeArea()
             .accentColor(Color(.systemPink))
             .onAppear{
@@ -33,6 +33,8 @@ struct ContentView_Previews: PreviewProvider {
 
  final class ContentViewModel:NSObject,  ObservableObject, CLLocationManagerDelegate{
     
+     @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.331, longitude: -51.0949), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+     
      var locationManager: CLLocationManager?
     
      func checkIfLocationServicesEnabled(){
@@ -64,7 +66,7 @@ struct ContentView_Previews: PreviewProvider {
          case .denied:
              print("Change your authorization settings!!PERMISSION DENIED BY USER")
          case .authorizedAlways, .authorizedWhenInUse:
-             break
+             region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
          @unknown default:
              break
          }
